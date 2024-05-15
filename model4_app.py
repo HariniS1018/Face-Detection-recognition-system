@@ -32,27 +32,30 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def store(file, user_id):
-    if not allowed_file(file):
-        return {'message': 'photo format is not allowed '}, 402
+    try:
+        if not allowed_file(file.filename):
+            print("message: photo format is not allowed")
+        
+        user_folder = os.path.join(app.config['UPLOAD_FOLDER'], str(user_id))
+        if not os.path.exists(user_folder):
+            os.makedirs(user_folder)
+            print(user_folder)
+        
+        # Save file to user's folder
+        file.save(os.path.join(user_folder, file.filename))
+
+        print('File uploaded successfully')
+    except Exception as e:
+        print(e)
     
-    user_folder = os.path.join(app.config['UPLOAD_FOLDER'], str(user_id))
-    if not os.path.exists(user_folder):
-        os.makedirs(user_folder)
-
-    # Save file to user's folder
-    file.save(os.path.join(user_folder, file.filename))
-
-    return 'File uploaded successfully'
-
-    
-class UserRegister(Resource):
+class UserRegistration(Resource):
     def post(self):
         user_id = request.form.get('user_id')
         user_name = request.form.get('user_name')
         password = request.form.get('password')
-        a = request.files.get('img_path')
-        b = request.files.get('img_path')
-        c = request.files.get('img_path')
+        a = request.files.get('a')
+        b = request.files.get('b')
+        c = request.files.get('c')
 
         if not all([user_id, user_name, password, a, b, c]):
             return {'message': 'All fields are required'}, 401
@@ -69,6 +72,7 @@ class UserRegister(Resource):
         try:
             db.session.add(add_user)
             db.session.commit()
+            print("Data is stored !!")
             status_code = main()
             if status_code == 200:
                 return "Registration successful !!", 201
@@ -94,7 +98,7 @@ class IdentifyStudent(Resource):
             print("The students who are present are: ", user_ids)
 
 api.add_resource(IdentifyStudent, '/IdentifyStudent')
-api.add_resource(UserRegister, '/UserRegister')
+api.add_resource(UserRegistration, '/UserRegistration')
 
 if __name__ == '__main__':
     app.run(debug=True)
