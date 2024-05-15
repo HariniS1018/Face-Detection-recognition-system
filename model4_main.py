@@ -162,7 +162,7 @@ def main():
     X_train, X_test, y_train, y_test = split_dataset(images, labels)
 
     # Step 3: Call face detection model
-    face_detector = detection_model()
+    # face_detector = detection_model()
 
     # Step 4: Train face recognition model
     face_recognizer = train_face_recognition(X_train, y_train)
@@ -179,9 +179,6 @@ def main():
 def load_face_recognizer():
     folder_path = "C:/Users/Admin/OneDrive/Documents/Harini_S/projects/FDS_FRS/face_recognition_model.xml"
     
-    # Construct the path to the XML file
-    recognizer_file = os.path.join(folder_path, 'face_recognizer.xml')
-
     # Load the face recognizer from the XML file
     face_recognizer = cv2.face.LBPHFaceRecognizer_create()
     face_recognizer.read(folder_path)
